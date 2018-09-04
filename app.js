@@ -1,14 +1,15 @@
 import express from 'express'
 import config from './config'
 import bodyParser from 'body-parser'
-// import session from 'express-session'
+import session from 'express-session'
+import connectMongo from 'connect-mongo'
 import cookieParser from 'cookie-parser'
 import router from './router/index'
 import './mongodb/db'
 
 
 const app = express();
-// const MongoStore = connectMongo(session);
+const MongoStore = connectMongo(session);
 
 //处理跨域
 app.all('*', (req, res, next) => {
@@ -27,7 +28,7 @@ app.all('*', (req, res, next) => {
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json({}));
 app.use(cookieParser());
-/*app.use(session({
+app.use(session({
   name: 'express',
   secret: '123',
   resave: true,
@@ -40,7 +41,7 @@ app.use(cookieParser());
   store: new MongoStore({
     url: config.sessionStorageURL
   })
-}))*/
+}))
 
 router(app);
 

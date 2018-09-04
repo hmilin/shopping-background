@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import config from '../config'
 
-mongoose.connect(config.DB_URL, { server: {auto_reconnect: true}});
+mongoose.connect(config.DB_URL, {useNewUrlParser:true}/*{ server: {auto_reconnect: true}}*/);
 mongoose.Promise = global.Promise;
 
 const db = mongoose.connection;
@@ -18,4 +18,4 @@ db.on('error', (error) => {
 db.on('close', () => {
   console.log('The database is disconnected and try to reconnect the database');
   mongoose.connect(config.DB_URL, { server: {auto_reconnect: true}});
-})
+});
