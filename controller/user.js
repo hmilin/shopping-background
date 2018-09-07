@@ -23,7 +23,8 @@ class User extends BaseClass{
           username,
           password: md5password,
           user_id: user_id,
-          head_portrait: 'http://zjimg.5054399.com/allimg/170503/23_170503150254_1.jpg'
+          head_portrait: 'http://zjimg.5054399.com/allimg/170503/23_170503150254_1.jpg',
+          address: ''
         };
         await new UserModel(createData).save();
 
@@ -210,7 +211,90 @@ class User extends BaseClass{
       })
     }
   }
-
+  //删除购物车内容
+  async deleteCart(req, res) {
+    const user_id = req.session.user_id;
+    const deleteList = req.body.deleteList;
+    try {
+      deleteList.forEach( async (item) => {
+        const deleteData = await CartModel.findOne({user_id, product_id: item});
+        deleteData.remove();
+      });
+      res.send({
+        code: 200,
+        success: '删除购物车成功'
+      })
+    } catch(err) {
+      console.log('删除购物车发生错误', err);
+      res.send({
+        code: -1,
+        message: '删除购物车失败'
+      })
+    }
+  }
+  //获取收藏内容
+  async getCollectContent(req, res) {
+    const user_id = req.session.user_id;
+    try {
+      const mark = await MarkModel.find({user_id});
+      res.send({
+        code: 200,
+        success: '获取收藏内容成功',
+        data: {
+          list: mark
+        }
+      })
+    } catch(err) {
+      console.log('获取收藏内容发生错误', err);
+      res.send({
+        code: -1,
+        message: '获取收藏内容失败'
+      })
+    }
+  }
+  //获取收货地址
+  async getAddress(req, res) {
+    const user_id = req.session.user_id;
+    try {
+      const user = await UserModel.findOne({user_id});
+      console.log(user)
+      res.send({
+        code: 200,
+        success: '获取地址成功',
+        data: {
+          address: user.address
+        }
+      });
+    } catch(err) {
+      console.log('获取地址发生错误', err);
+      res.send({
+        code: -1,
+        message: '获取地址失败'
+      });
+    }
+  }
+  //修改地址
+  async changeAddress(req, res) {
+    const user_id = req.session.user_id;
+    const address = req.body.address;
+    try {
+      const user = await UserModel.find({user_id});
+      await UserModel.update({user_id}, {address});
+      res.send({
+        code: 200,
+        success: '修改地址成功',
+        data: {
+          address
+        }
+      })
+    }catch (err) {
+      console.log('修改地址发生错误', err);
+      res.send({
+        code: -1,
+        message: '修改地址错误'
+      })
+    }
+  }
   //加密
   encryption(password) {
     const md5password = this.Md5(this.Md5(password));

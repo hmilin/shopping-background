@@ -12,5 +12,8 @@ router.post('/cancel_mark:id', Auth.authUser, User.cancelMark);
 router.get('/is_mark:id', User.isMark);
 router.post('/add_cart:id', User.addCart); //加购物车
 router.get('/cart_content', Auth.authUser, User.getCartContent);//获取购物车内容
-
+router.post('/delete_cart', Auth.authUser, User.deleteCart); //删除购物车
+router.get('/my_collect', Auth.authUser, User.getCollectContent); //获取收藏内容
+router.get('/get_address', Auth.authUser, User.getAddress); //获取收货地址
+router.post('/change_address', Auth.authUser, User.changeAddress); //修改地址
 export default router;
