@@ -16,4 +16,5 @@ router.post('/delete_cart', Auth.authUser, User.deleteCart); //删除购物车
 router.get('/my_collect', Auth.authUser, User.getCollectContent); //获取收藏内容
 router.get('/get_address', Auth.authUser, User.getAddress); //获取收货地址
 router.post('/change_address', Auth.authUser, User.changeAddress); //修改地址
+router.post('/place_order', Auth.authUser, User.placeOrder); //提交订单
 export default router;

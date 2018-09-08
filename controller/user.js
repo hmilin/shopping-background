@@ -5,6 +5,7 @@ import IdModel from '../model/id'
 import ProductModel from '../model/product'
 import MarkModel from '../model/mark'
 import CartModel from '../model/cart';
+import OrderModel from '../model/order'
 
 class User extends BaseClass{
   constructor() {
@@ -217,7 +218,7 @@ class User extends BaseClass{
     const deleteList = req.body.deleteList;
     try {
       deleteList.forEach( async (item) => {
-        const deleteData = await CartModel.findOne({user_id, product_id: item});
+        const deleteData = await CartModel.findOne({user_id, _id: item});
         deleteData.remove();
       });
       res.send({
@@ -257,12 +258,13 @@ class User extends BaseClass{
     const user_id = req.session.user_id;
     try {
       const user = await UserModel.findOne({user_id});
-      console.log(user)
       res.send({
         code: 200,
         success: '获取地址成功',
         data: {
-          address: user.address
+          name: user.name,
+          phone: user.phone,
+          location: user.location
         }
       });
     } catch(err) {
@@ -276,15 +278,17 @@ class User extends BaseClass{
   //修改地址
   async changeAddress(req, res) {
     const user_id = req.session.user_id;
-    const address = req.body.address;
+    const { name, phone, location} = req.body;
     try {
       const user = await UserModel.find({user_id});
-      await UserModel.update({user_id}, {address});
+      await UserModel.update({user_id}, {name, phone, location});
       res.send({
         code: 200,
         success: '修改地址成功',
         data: {
-          address
+          name,
+          phone,
+          location
         }
       })
     }catch (err) {
@@ -292,6 +296,33 @@ class User extends BaseClass{
       res.send({
         code: -1,
         message: '修改地址错误'
+      })
+    }
+  }
+  //提交订单
+  async placeOrder(req, res) {
+    const user_id = req.session.user_id;
+    const {productList, total_price } = req.body;
+    try {
+      const order = {
+        user_id,
+        product: productList,
+        total_price
+      }
+      await new OrderModel(order).save();
+      productList.forEach(async (item) => {
+        const data = await CartModel.findOne({user_id, product_id: item.product_id});
+        data.remove();
+      })
+      res.send({
+        code: 200,
+        success: '提交订单成功'
+      });
+    } catch(err) {
+      console.log('提交订单发生错误', err);
+      res.send({
+        code: -1,
+        message: '提交订单失败'
       })
     }
   }
