@@ -280,7 +280,6 @@ class User extends BaseClass{
     const user_id = req.session.user_id;
     const { name, phone, location} = req.body;
     try {
-      const user = await UserModel.find({user_id});
       await UserModel.update({user_id}, {name, phone, location});
       res.send({
         code: 200,
@@ -324,6 +323,50 @@ class User extends BaseClass{
         code: -1,
         message: '提交订单失败'
       })
+    }
+  }
+  //获取订单
+  async getOrder(req, res) {
+    const user_id = req.session.user_id;
+    try {
+      const order = await OrderModel.find({user_id});
+      res.send({
+        code: 200,
+        success: '获取订单成功',
+        data: order
+      });
+    } catch(err) {
+      console.log('获取订单发生错误',err);
+      res.send({
+        code: -1,
+        message: '获取订单失败'
+      });
+    }
+  }
+  //修改头像
+  async changeName(req, res) {
+    const user_id = req.session.user_id;
+    const new_name = req.body.new_name;
+    const name = await UserModel.findOne({username: new_name});
+    if(name) {
+      res.send({
+        code: -3,
+        message: '该昵称已被使用'
+      });
+    }else {
+      try {
+        await UserModel.update({user_id}, {username: new_name});
+        res.send({
+          code: 200,
+          success: '修改昵称成功'
+        })
+      } catch(err) {
+        console.log('修改登录名发生错误', err);
+        res.send({
+          code: -1,
+          message: '修改昵称失败'
+        });
+      }
     }
   }
   //加密

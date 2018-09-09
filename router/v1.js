@@ -17,4 +17,6 @@ router.get('/my_collect', Auth.authUser, User.getCollectContent); //获取收藏
 router.get('/get_address', Auth.authUser, User.getAddress); //获取收货地址
 router.post('/change_address', Auth.authUser, User.changeAddress); //修改地址
 router.post('/place_order', Auth.authUser, User.placeOrder); //提交订单
+router.get('/get_order', Auth.authUser, User.getOrder); //获取订单
+router.post('/change_name', Auth.authUser, User.changeName); //修改登录名
 export default router;
